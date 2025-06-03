@@ -100,8 +100,8 @@ router.get('/:id', requireStaff, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    if (!hasPermissionToEditRole(request_user_role, userBasic.role)) {
-      return res.status(403).json({ error: 'You are not allowed to do this action'})
+    if (userBasic.role != 'dentist' && userBasice.role != 'patient') {
+      return res.status(400).json({ error: 'Requested user should be either a dentist or a patient'})
     }
 
     // Determine which appointments to include based on user role
