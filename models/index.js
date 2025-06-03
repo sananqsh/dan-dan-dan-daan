@@ -1,5 +1,8 @@
 const sequelize = require('../config/database');
 const User = require('./User');
+const Treatment = require('./Treatment');
+const Appointment = require('./Appointment');
+const Payment = require('./Payment');
 
 // Sync all models (create tables if they don't exist)
 async function syncDatabase() {
@@ -11,8 +14,23 @@ async function syncDatabase() {
   }
 }
 
+// Associations
+User.hasMany(Appointment, { foreignKey: 'patient_id', as: 'PatientAppointments' });
+User.hasMany(Appointment, { foreignKey: 'dentist_id', as: 'DentistAppointments' });
+Appointment.belongsTo(User, { foreignKey: 'patient_id', as: 'Patient' });
+Appointment.belongsTo(User, { foreignKey: 'dentist_id', as: 'Dentist' });
+
+Treatment.hasMany(Appointment, { foreignKey: 'treatment_id' });
+Appointment.belongsTo(Treatment, { foreignKey: 'treatment_id' });
+
+Appointment.hasMany(Payment, { foreignKey: 'appointment_id', as: 'AppointmentPayments' });
+Payment.belongsTo(Appointment, { foreignKey: 'appointment_id', as: 'Appointment' });
+
 module.exports = {
   sequelize,
+  syncDatabase,
   User,
-  syncDatabase
+  Treatment,
+  Appointment,
+  Payment
 };
