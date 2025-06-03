@@ -37,13 +37,13 @@ const User = sequelize.define('User', {
     }
   },
   role: {
-    type: DataTypes.ENUM('manager', 'receptionist', 'doctor', 'patient'),
+    type: DataTypes.ENUM('manager', 'receptionist', 'dentist', 'patient'),
     allowNull: false,
     defaultValue: 'patient',
     validate: {
       isIn: {
-        args: [['manager', 'receptionist', 'doctor', 'patient']],
-        msg: 'Role must be one of: manager, receptionist, doctor, patient'
+        args: [['manager', 'receptionist', 'dentist', 'patient']],
+        msg: 'Role must be one of: manager, receptionist, dentist, patient'
       }
     }
   },

@@ -30,7 +30,7 @@ router.get('/staff', requireStaff, async (req, res) => {
   try {
     const staff = await User.findAll({
       where: {
-        role: ['manager', 'receptionist', 'doctor']
+        role: ['manager', 'receptionist']
       },
       attributes: { exclude: ['password'] }
     });
@@ -40,6 +40,18 @@ router.get('/staff', requireStaff, async (req, res) => {
   }
 });
 
+// Get dentists - Managers and receptionists can see dentists
+router.get('/dentists', requireStaff, async (req, res) => {
+  try {
+    const dentists = await User.findAll({
+      where: { role: 'dentist' },
+      attributes: { exclude: ['password'] }
+    });
+    res.json(dentists);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // Get patients - Staff can view patients
 router.get('/patients', requireStaff, async (req, res) => {

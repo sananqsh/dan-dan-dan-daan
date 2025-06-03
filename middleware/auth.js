@@ -49,7 +49,7 @@ const requireRole = (allowedRoles) => {
 // Specific role middleware functions
 const requireManager = requireRole(['manager']);
 const requireStaff = requireRole(['manager', 'receptionist']);
-const requireDoctor = requireRole(['doctor']);
+const requiredentist = requireRole(['dentist']);
 const requirePatient = requireRole(['patient']);
 
 // Permission levels for different operations
@@ -121,7 +121,7 @@ module.exports = {
   requireRole,
   requireManager,
   requireStaff,
-  requireDoctor,
+  requiredentist,
   requirePatient,
   hasPermission,
   hasPermissionToEditRole,
