@@ -1,5 +1,5 @@
 {
-  "name": "node-crud-api-sequelize",
+  "name": "dentistry-node-api",
   "version": "1.0.0",
   "description": "Node.js CRUD API with Sequelize ORM and PostgreSQL",
   "main": "server.js",
@@ -17,7 +17,9 @@
     "pg-hstore": "^2.3.4",
     "dotenv": "^16.3.1",
     "cors": "^2.8.5",
-    "helmet": "^7.0.0"
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "bcrypt": "^6.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1",
