@@ -4,6 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 
 const { syncDatabase } = require('./models/index');
+const authRoutes = require('./routes/auth')
 const userRoutes = require('./routes/users');
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 
 // Health check endpoint
