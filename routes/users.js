@@ -70,18 +70,70 @@ router.get('/patients', requireStaff, async (req, res) => {
 router.get('/:id', requireStaff, async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findByPk(id);
     const { request_user_role } = req.user.role;
 
-    if (!hasPermissionToEditRole(request_user_role, user.role)) {
-      return res.status(403).json({ error: 'You are not allowed to do this action.'})
-    }
-
+    const user = await User.findByPk(id);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
+    if (!hasPermissionToEditRole(request_user_role, user.role)) {
+      return res.status(403).json({ error: 'You are not allowed to do this action'})
+    }
+
     res.json(user);
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).json({ error: 'Failed to fetch user' });
+  }
+});
+
+// GET /api/users/:id/record - Get user record by ID (their appointments)
+router.get('/:id', requireStaff, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { request_user_role } = req.user.role;
+
+    // First get the user to check their role
+    const userBasic = await User.findByPk(id);
+    if (!userBasic) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (!hasPermissionToEditRole(request_user_role, userBasic.role)) {
+      return res.status(403).json({ error: 'You are not allowed to do this action'})
+    }
+
+    // Determine which appointments to include based on user role
+    const includeOptions = [];
+    if (userBasic.role === 'patient') {
+      includeOptions.push({
+        model: Appointment,
+        as: 'PatientAppointments',
+        include: [{ model: Treatment }]
+      });
+    } else if (userBasic.role === 'dentist') {
+      includeOptions.push({
+        model: Appointment,
+        as: 'DentistAppointments',
+        include: [{ model: Treatment }]
+      });
+    }
+
+    // Get user with appropriate appointments
+    const user = await User.findByPk(id, {
+      include: includeOptions
+    });
+
+    // Extract appointments based on role
+    const appointments = userBasic.role === 'patient'
+      ? user.PatientAppointments
+      : user.DentistAppointments;
+
+    res.json({
+      user: user,
+      appointments: appointments || []
+    });
   } catch (error) {
     console.error('Error fetching user:', error);
     res.status(500).json({ error: 'Failed to fetch user' });
@@ -101,7 +153,7 @@ router.post('/', requireStaff, async (req, res) => {
     const { request_user_role } = req.user.role;
 
     if (!hasPermissionToEditRole(request_user_role, role)) {
-      return res.status(403).json({ error: 'You are not allowed to do this action.'})
+      return res.status(403).json({ error: 'You are not allowed to do this action'})
     }
 
     // Build user data object
@@ -151,7 +203,7 @@ router.put('/:id', requireStaff, async (req, res) => {
     }
 
     if (!hasPermissionToEditRole(request_user_role, user.role)) {
-      return res.status(403).json({ error: 'You are not allowed to do this action.'})
+      return res.status(403).json({ error: 'You are not allowed to do this action'})
     }
 
     // Build update data object
