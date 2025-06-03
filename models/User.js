@@ -1,4 +1,5 @@
 const { DataTypes } = require('sequelize');
+const bcrypt = require('bcrypt');
 const sequelize = require('../config/database');
 
 const User = sequelize.define('User', {
@@ -27,32 +28,93 @@ const User = sequelize.define('User', {
       }
     }
   },
+  password: {
+    type: DataTypes.STRING(255),
+    allowNull: false,
+    validate: {
+      notEmpty: { msg: 'Password cannot be empty' },
+      len: { args: [6, 255], msg: 'Password must be at least 6 characters' }
+    }
+  },
+  role: {
+    type: DataTypes.ENUM('manager', 'receptionist', 'doctor', 'patient'),
+    allowNull: false,
+    defaultValue: 'patient',
+    validate: {
+      isIn: {
+        args: [['manager', 'receptionist', 'doctor', 'patient']],
+        msg: 'Role must be one of: manager, receptionist, doctor, patient'
+      }
+    }
+  },
   age: {
     type: DataTypes.INTEGER,
     validate: {
       min: { args: [0], msg: 'Age must be positive' },
       max: { args: [150], msg: 'Age must be realistic' }
     }
-  }
+  },
+  is_active: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+    allowNull: false
+  },
 }, {
   tableName: 'users',
   timestamps: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at',
   hooks: {
-    beforeCreate: (user) => {
-      // Remove any non-digit characters except + at the beginning
+    beforeCreate: async (user) => {
+      // Clean phone number
       if (user.phone_number) {
         user.phone_number = user.phone_number.replace(/[^\d+]/g, '');
       }
+
+      // Hash password
+      if (user.password) {
+        user.password = await User.hashPassword(user.password);
+      }
     },
-    beforeUpdate: (user) => {
-      // Remove any non-digit characters except + at the beginning
-      if (user.phone_number) {
+    beforeUpdate: async (user) => {
+      // Clean phone number if it's being changed
+      if (user.changed('phone_number')) {
         user.phone_number = user.phone_number.replace(/[^\d+]/g, '');
+      }
+
+      // Hash password if it's being changed
+      if (user.changed('password')) {
+        user.password = await User.hashPassword(user.password);
       }
     }
   }
 });
+
+
+// Class method to hash passwords
+User.hashPassword = async function (plainPassword) {
+  const saltRounds = 12;
+  return await bcrypt.hash(plainPassword, saltRounds);
+};
+
+
+// Instance method to check password
+User.prototype.checkPassword = async function(password) {
+  return await bcrypt.compare(password, this.password);
+};
+
+// Instance method to generate JWT token
+User.prototype.generateAuthToken = function() {
+  const jwt = require('jsonwebtoken');
+  return jwt.sign(
+    {
+      userId: this.id,
+      role: this.role,
+      phone: this.phone_number
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: '24h' }
+  );
+};
 
 module.exports = User;
