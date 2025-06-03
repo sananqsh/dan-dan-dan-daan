@@ -47,13 +47,6 @@ const User = sequelize.define('User', {
       }
     }
   },
-  age: {
-    type: DataTypes.INTEGER,
-    validate: {
-      min: { args: [0], msg: 'Age must be positive' },
-      max: { args: [150], msg: 'Age must be realistic' }
-    }
-  },
   is_active: {
     type: DataTypes.BOOLEAN,
     defaultValue: true,

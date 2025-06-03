@@ -10,7 +10,6 @@ module.exports = {
         name: 'John Doe',
         phone_number: '09120001230',
         password: await User.hashPassword('123123'),
-        age: 30,
         role: "manager",
         created_at: new Date(),
         updated_at: new Date()
@@ -19,7 +18,6 @@ module.exports = {
         name: 'Jane Smith',
         phone_number: '09120001231',
         password: await User.hashPassword('123456'),
-        age: 25,
         role: "receptionist",
         created_at: new Date(),
         updated_at: new Date()
@@ -28,7 +26,6 @@ module.exports = {
         name: 'Bob Johnson',
         phone_number: '09120001232',
         password: await User.hashPassword('123Bob'),
-        age: 35,
         role: "patient",
         insurance_number: 'INS123456789',
         insurance_provider: 'Red Crescent',

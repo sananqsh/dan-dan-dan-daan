@@ -53,7 +53,6 @@ router.post('/login', requireStaff, async (req, res) => {
         name: user.name,
         phone_number: user.phone_number,
         role: user.role,
-        age: user.age,
         is_active: user.is_active,
         last_login: user.last_login
       };
@@ -96,7 +95,6 @@ router.get('/me', authenticateToken, async (req, res) => {
       name: req.user.name,
       phone_number: req.user.phone_number,
       role: req.user.role,
-      age: req.user.age,
       is_active: req.user.is_active,
       last_login: req.user.last_login,
       created_at: req.user.created_at
@@ -153,7 +151,7 @@ router.post('/change-password', authenticateToken, async (req, res) => {
 // POST /api/auth/register - Register new user
 // router.post('/register', requireStaff, async (req, res) => {
 //   try {
-//     const { name, phone_number, password, role, age } = req.body;
+//     const { name, phone_number, password, role } = req.body;
 
 //     // Check if user already exists
 //     const existingUser = await User.findOne({
@@ -172,7 +170,6 @@ router.post('/change-password', authenticateToken, async (req, res) => {
 //       phone_number,
 //       password,
 //       role: role || 'patient',
-//       age
 //     });
 
 //     // Generate token
@@ -184,7 +181,6 @@ router.post('/change-password', authenticateToken, async (req, res) => {
 //       name: user.name,
 //       phone_number: user.phone_number,
 //       role: user.role,
-//       age: user.age,
 //       is_active: user.is_active,
 //       created_at: user.created_at
 //     };

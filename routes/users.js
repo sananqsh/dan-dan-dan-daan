@@ -82,7 +82,6 @@ router.post('/', requireStaff, async (req, res) => {
     const {
       name,
       phone_number,
-      age,
       role,
       insurance_number,
       insurance_provider
@@ -94,7 +93,7 @@ router.post('/', requireStaff, async (req, res) => {
     }
 
     // Build user data object
-    const userData = { name, phone_number, age, role };
+    const userData = { name, phone_number, role };
 
     // Add insurance fields if user is a patient
     if (role === 'patient') {
@@ -128,7 +127,6 @@ router.put('/:id', requireStaff, async (req, res) => {
     const {
       name,
       phone_number,
-      age,
       role,
       insurance_number,
       insurance_provider
@@ -145,7 +143,7 @@ router.put('/:id', requireStaff, async (req, res) => {
     }
 
     // Build update data object
-    const updateData = { name, phone_number, age, role };
+    const updateData = { name, phone_number, role };
 
     // Handle insurance fields based on role
     if (role === 'patient') {
@@ -158,7 +156,7 @@ router.put('/:id', requireStaff, async (req, res) => {
       updateData.insurance_provider = null;
     }
 
-    await user.update({ name, phone_number, age, role });
+    await user.update({ name, phone_number, role });
     res.json(user);
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
