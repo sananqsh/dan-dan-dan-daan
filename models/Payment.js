@@ -35,7 +35,20 @@ const Payment = sequelize.define('Payment', {
   tableName: 'payments',
   timestamps: true,
   createdAt: 'created_at',
-  updatedAt: false
+  updatedAt: false,
+  hooks: {
+    beforeUpdate: (payment, options) => {
+      // Get the changed fields
+      const changedFields = payment.changed();
+
+      // Check if any field other than 'note' is being updated
+      const invalidUpdates = changedFields.filter(field => field !== 'note');
+
+      if (invalidUpdates.length > 0) {
+        throw new Error(`Only the 'note' field can be updated. Attempted to update: ${invalidUpdates.join(', ')}`);
+      }
+    }
+  }
 });
 
 module.exports = Payment;
