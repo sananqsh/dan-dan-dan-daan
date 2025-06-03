@@ -6,6 +6,9 @@ const helmet = require('helmet');
 const { syncDatabase } = require('./models/index');
 const authRoutes = require('./routes/auth')
 const userRoutes = require('./routes/users');
+const treatmentRoutes = require('./routes/treatments');
+const appointmentRoutes = require('./routes/appointments');
+const paymentRoutes = require('./routes/payments');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,6 +22,9 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/treatments', treatmentRoutes);
+app.use('/api/appointments', appointmentRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -45,6 +51,9 @@ async function startServer() {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📋 Health check: http://localhost:${PORT}/health`);
       console.log(`👥 Users API: http://localhost:${PORT}/api/users`);
+      console.log(`📦 Treatments API: http://localhost:${PORT}/api/treatments`);
+      console.log(`📅 Appointments API: http://localhost:${PORT}/api/appointments`);
+      console.log(`💳 Payments API: http://localhost:${PORT}/api/payments`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);
