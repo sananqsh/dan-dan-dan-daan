@@ -30,6 +30,8 @@ module.exports = {
         password: await User.hashPassword('123Bob'),
         age: 35,
         role: "patient",
+        insurance_number: 'INS123456789',
+        insurance_provider: 'Red Crescent',
         created_at: new Date(),
         updated_at: new Date()
       }

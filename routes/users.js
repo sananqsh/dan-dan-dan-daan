@@ -79,14 +79,30 @@ router.get('/:id', requireStaff, async (req, res) => {
 // POST /api/users - Create new user
 router.post('/', requireStaff, async (req, res) => {
   try {
-    const { name, phone_number, age, role } = req.body;
+    const {
+      name,
+      phone_number,
+      age,
+      role,
+      insurance_number,
+      insurance_provider
+    } = req.body;
     const { request_user_role } = req.user.role;
 
     if (!hasPermissionToEditRole(request_user_role, role)) {
       return res.status(403).json({ error: 'You are not allowed to do this action.'})
     }
 
-    const user = await User.create({ name, phone_number, age, role });
+    // Build user data object
+    const userData = { name, phone_number, age, role };
+
+    // Add insurance fields if user is a patient
+    if (role === 'patient') {
+      if (insurance_number) userData.insurance_number = insurance_number;
+      if (insurance_provider) userData.insurance_provider = insurance_provider;
+    }
+
+    const user = await User.create(userData);
     res.status(201).json(user);
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
@@ -109,16 +125,37 @@ router.post('/', requireStaff, async (req, res) => {
 router.put('/:id', requireStaff, async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, phone_number, age, role } = req.body;
+    const {
+      name,
+      phone_number,
+      age,
+      role,
+      insurance_number,
+      insurance_provider
+    } = req.body;
     const { request_user_role } = req.user.role;
 
     const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
     if (!hasPermissionToEditRole(request_user_role, user.role)) {
       return res.status(403).json({ error: 'You are not allowed to do this action.'})
     }
 
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+    // Build update data object
+    const updateData = { name, phone_number, age, role };
+
+    // Handle insurance fields based on role
+    if (role === 'patient') {
+      // If becoming/staying a patient, include insurance fields
+      if (insurance_number !== undefined) updateData.insurance_number = insurance_number;
+      if (insurance_provider !== undefined) updateData.insurance_provider = insurance_provider;
+    } else if (user.role === 'patient' && role !== 'patient') {
+      // If changing from patient to another role, clear insurance fields
+      updateData.insurance_number = null;
+      updateData.insurance_provider = null;
     }
 
     await user.update({ name, phone_number, age, role });

@@ -59,11 +59,40 @@ const User = sequelize.define('User', {
     defaultValue: true,
     allowNull: false
   },
+  // Patient-specific fields
+  //    NOTE: if role-specific fields increased in the future, we should define role-specific tables with foreign key to the users
+  insurance_number: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
+    unique: true,
+    validate: {
+      isInsuranceNumberValid(value) {
+        if (this.role === 'patient' && !value) {
+          throw new Error('Insurance number is required for patients');
+        }
+        if (this.role !== 'patient' && value) {
+          throw new Error('Insurance number should only be set for patients');
+        }
+      }
+    }
+  },
+  insurance_provider: {
+    type: DataTypes.STRING(100),
+    allowNull: true,
+    validate: {
+      isInsuranceProviderValid(value) {
+        if (this.role !== 'patient' && value) {
+          throw new Error('Insurance provider should only be set for patients');
+        }
+      }
+    }
+  },
 }, {
   tableName: 'users',
   timestamps: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at',
+
   hooks: {
     beforeCreate: async (user) => {
       // Clean phone number
