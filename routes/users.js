@@ -1,5 +1,5 @@
 const express = require('express');
-const { User } = require('../models');
+const { User, Appointment, Treatment } = require('../models');
 const router = express.Router();
 const {
   authenticateToken,
@@ -89,7 +89,7 @@ router.get('/:id', requireStaff, async (req, res) => {
 });
 
 // GET /api/users/:id/record - Get user record by ID (their appointments)
-router.get('/:id', requireStaff, async (req, res) => {
+router.get('/:id/record', requireStaff, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -130,7 +130,7 @@ router.get('/:id', requireStaff, async (req, res) => {
       : user.DentistAppointments;
 
     res.json({
-      user: user,
+      user: userBasic,
       appointments: appointments || []
     });
   } catch (error) {
