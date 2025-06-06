@@ -39,6 +39,21 @@ app.use('*', (req, res) => {
 // Error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
+
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    return res.status(400).json({
+      error: 'Invalid JSON',
+      details: 'The request body contains malformed JSON syntax'
+    });
+  }
+
+  if (err.message === 'Invalid JSON') {
+    return res.status(400).json({
+      error: 'Invalid JSON',
+      details: 'The request body contains invalid JSON syntax'
+    });
+  }
+
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
