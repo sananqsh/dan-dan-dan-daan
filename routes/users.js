@@ -70,7 +70,7 @@ router.get('/patients', requireStaff, async (req, res) => {
 router.get('/:id', requireStaff, async (req, res) => {
   try {
     const { id } = req.params;
-    const { request_user_role } = req.user.role;
+    const request_user_role = req.user.role;
 
     const user = await User.findByPk(id);
     if (!user) {
@@ -92,7 +92,6 @@ router.get('/:id', requireStaff, async (req, res) => {
 router.get('/:id', requireStaff, async (req, res) => {
   try {
     const { id } = req.params;
-    const { request_user_role } = req.user.role;
 
     // First get the user to check their role
     const userBasic = await User.findByPk(id);
@@ -150,7 +149,7 @@ router.post('/', requireStaff, async (req, res) => {
       insurance_number,
       insurance_provider
     } = req.body;
-    const { request_user_role } = req.user.role;
+    const request_user_role = req.user.role;
 
     if (!hasPermissionToEditRole(request_user_role, role)) {
       return res.status(403).json({ error: 'You are not allowed to do this action'})
@@ -195,7 +194,7 @@ router.put('/:id', requireStaff, async (req, res) => {
       insurance_number,
       insurance_provider
     } = req.body;
-    const { request_user_role } = req.user.role;
+    const request_user_role = req.user.role;
 
     const user = await User.findByPk(id);
     if (!user) {
