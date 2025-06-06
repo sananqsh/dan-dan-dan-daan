@@ -103,7 +103,6 @@ router.get('/:id', requireStaff, async (req, res) => {
 
 // POST /api/appointments - Create new appointment
 router.post('/', requireStaff, async (req, res) => {
-  // TODO: check users being patient/dentist
   try {
     const {
         patient_id,
@@ -161,7 +160,6 @@ router.post('/', requireStaff, async (req, res) => {
 
 // PUT /api/appointments/:id - Update appointment
 router.put('/:id', requireStaff, async (req, res) => {
-  // TODO: check users being patient/dentist
   try {
     const { id } = req.params;
     const {
