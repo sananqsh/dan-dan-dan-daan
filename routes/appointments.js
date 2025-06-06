@@ -13,9 +13,10 @@ router.use(authenticateToken);
 
 
 // GET /api/appointments?date=YYYY-MM-DD - Get all appointments (optionally filtered by date)
+// GET /api/appointments?from_datetime=ISO8601&to_datetime=ISO8601 - Get all appointments filtered by datetime range
 router.get('/', requireStaff, async (req, res) => {
   try {
-    const { date } = req.query;
+    const { date, from_datetime, to_datetime } = req.query;
     const where = {};
 
     if (date) {
@@ -23,6 +24,25 @@ router.get('/', requireStaff, async (req, res) => {
       const dayEnd = new Date(date + 'T23:59:59.999');
       where.scheduled_at = {
         [Op.between]: [dayStart, dayEnd]
+      };
+    } else if (from_datetime && to_datetime) {
+      // Check if the datetime strings include time components
+      const dateOnlyRegex = /^\d{4}-\d{2}-\d{2}$/;
+      if (dateOnlyRegex.test(from_datetime) || dateOnlyRegex.test(to_datetime)) {
+        return res.status(400).json({
+          error: 'Datetime parameters must include time component. Use format YYYY-MM-DDTHH:MM:SS'
+        });
+      }
+
+      const fromDatetime = new Date(from_datetime);
+      const toDatetime = new Date(to_datetime);
+
+      if (isNaN(fromDatetime.getTime()) || isNaN(toDatetime.getTime())) {
+        return res.status(400).json({ error: 'Invalid datetime format. Use ISO8601 format.' });
+      }
+
+      where.scheduled_at = {
+        [Op.between]: [fromDatetime, toDatetime]
       };
     }
 
@@ -45,8 +65,10 @@ router.get('/today', requireStaff, async (req, res) => {
         const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
         const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
 
-        where.scheduled_at = {
-            [Op.between]: [todayStart, todayEnd]
+        const where = {
+          scheduled_at: {
+              [Op.between]: [todayStart, todayEnd]
+          }
         };
 
         const appointments = await Appointment.findAll({
