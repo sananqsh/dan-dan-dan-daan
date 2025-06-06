@@ -17,11 +17,13 @@ A denstistry clinic
 
 3. Build and start containers
     ```
-    docker-compose up --build
+    docker-compose up --build -d
     ```
     - This will start:
         - Node.js app on port 3000
         - PostgreSQL database on port 5432
+    - After this, no need to run with `--build` each time you try to run the project
+
 
     > The APIs require an authentication token. And since the only way to add users is by having them added by users with manager and receptionist roles, the only way to start using the APIs is to seed the database with some inital data.
 
