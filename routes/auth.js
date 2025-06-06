@@ -1,11 +1,11 @@
 // routes/auth.js
 const express = require('express');
 const { User } = require('../models');
-const { authenticateToken, requireStaff } = require('../middleware/auth');
+const { authenticateToken } = require('../middleware/auth');
 const router = express.Router();
 
 // POST /api/auth/login - Login user (only allow managers and receptionists to log in for now)
-router.post('/login', requireStaff, async (req, res) => {
+router.post('/login', async (req, res) => {
     try {
       const { phone_number, password } = req.body;
 
