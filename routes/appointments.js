@@ -7,6 +7,7 @@ const {
   requireStaff,
 } = require('../middleware/auth');
 const AppointmentConflictError = require('../errors/AppointmentConflictError');
+const validateAppointmentRoles = require('../helpers');
 
 // All routes require authentication
 router.use(authenticateToken);
@@ -102,6 +103,7 @@ router.get('/:id', requireStaff, async (req, res) => {
 
 // POST /api/appointments - Create new appointment
 router.post('/', requireStaff, async (req, res) => {
+  // TODO: check users being patient/dentist
   try {
     const {
         patient_id,
@@ -112,6 +114,15 @@ router.post('/', requireStaff, async (req, res) => {
         scheduled_at,
         status
     } = req.body;
+
+    // Validate user roles
+    const roleValidation = await validateAppointmentRoles(patient_id, dentist_id);
+    if (!roleValidation.isValid) {
+      return res.status(roleValidation.statusCode).json({
+        error: roleValidation.error,
+        message: roleValidation.message
+      });
+    }
 
     const appointment = await Appointment.create({
         patient_id: patient_id,
@@ -150,6 +161,7 @@ router.post('/', requireStaff, async (req, res) => {
 
 // PUT /api/appointments/:id - Update appointment
 router.put('/:id', requireStaff, async (req, res) => {
+  // TODO: check users being patient/dentist
   try {
     const { id } = req.params;
     const {
@@ -161,6 +173,16 @@ router.put('/:id', requireStaff, async (req, res) => {
         scheduled_at,
         status
     } = req.body;
+
+    // Validate user roles
+    const roleValidation = await validateAppointmentRoles(patient_id, dentist_id);
+    if (!roleValidation.isValid) {
+      return res.status(roleValidation.statusCode).json({
+        error: roleValidation.error,
+        message: roleValidation.message
+      });
+    }
+
 
     const appointment = await Appointment.findByPk(id);
     if (!appointment) {
@@ -178,6 +200,14 @@ router.put('/:id', requireStaff, async (req, res) => {
     });
     res.json(appointment);
   } catch (error) {
+    if (error instanceof AppointmentConflictError) {
+      return res.status(error.statusCode).json({
+        error: 'Appointment conflict',
+        message: error.message,
+        details: error.conflictData
+      });
+    }
+
     if (error.name === 'SequelizeValidationError') {
       return res.status(400).json({
         error: 'Validation error',
