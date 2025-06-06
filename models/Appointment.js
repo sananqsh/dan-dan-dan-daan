@@ -1,7 +1,9 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Op } = require('sequelize');
 const sequelize = require('../config/database');
 const User = require('./User');
 const Treatment = require('./Treatment');
+const AppointmentConflictError = require('../errors/AppointmentConflictError');
+
 
 const Appointment = sequelize.define('Appointment', {
   id: {
@@ -95,7 +97,12 @@ async function validateNoConflicts(appointment) {
           message += ` Patient is already scheduled at that time.`;
         }
 
-        throw new Error(message);
+        throw new AppointmentConflictError(message, {
+          conflictId: conflict.id,
+          isDentistConflict,
+          isPatientConflict,
+          scheduledAt: conflict.scheduled_at
+      });
       }
   }
 

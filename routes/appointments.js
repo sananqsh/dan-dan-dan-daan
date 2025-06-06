@@ -4,9 +4,9 @@ const { Appointment } = require('../models');
 const router = express.Router();
 const {
   authenticateToken,
-  requireManager,
   requireStaff,
 } = require('../middleware/auth');
+const AppointmentConflictError = require('../errors/AppointmentConflictError');
 
 // All routes require authentication
 router.use(authenticateToken);
@@ -113,17 +113,25 @@ router.post('/', requireStaff, async (req, res) => {
         status
     } = req.body;
 
-    const appointment = await Appointment.create(
-        patient_id,
-        dentist_id,
-        treatment_id,
-        problem_description,
-        locked_price,
-        scheduled_at,
-        status
-    );
+    const appointment = await Appointment.create({
+        patient_id: patient_id,
+        dentist_id: dentist_id,
+        treatment_id: treatment_id,
+        problem_description: problem_description,
+        locked_price: locked_price,
+        scheduled_at: scheduled_at,
+        status: status
+    });
     res.status(201).json(appointment);
   } catch (error) {
+    if (error instanceof AppointmentConflictError) {
+      return res.status(error.statusCode).json({
+        error: 'Appointment conflict',
+        message: error.message,
+        details: error.conflictData
+      });
+    }
+
     if (error.name === 'SequelizeValidationError') {
       return res.status(400).json({
         error: 'Validation error',
