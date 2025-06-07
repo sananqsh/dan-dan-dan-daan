@@ -50,7 +50,11 @@ router.post('/', requireManager, async (req, res) => {
       price
     } = req.body;
 
-    const treatment = await Treatment.create(name, description, price);
+    const treatment = await Treatment.create({
+      name: name,
+      description: description,
+      price: price
+    });
     res.status(201).json(treatment);
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
