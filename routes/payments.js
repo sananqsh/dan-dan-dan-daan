@@ -9,7 +9,6 @@ const {
 // All routes require authentication
 router.use(authenticateToken);
 
-
 // GET /api/payments - Get all payments
 router.get('/', requireStaff, async (req, res) => {
     try {
@@ -40,39 +39,18 @@ router.get('/:id', requireStaff, async (req, res) => {
     }
   });
 
-// POST /api/payments - Create new payment
-router.post('/', requireStaff, async (req, res) => {
-  try {
-    const {
-      appointment_id,
-      amount,
-      note,
-      paid_at
-    } = req.body;
-
-    const payment = await Payment.create(appointment_id, amount, note, paid_at);
-    res.status(201).json(payment);
-  } catch (error) {
-    if (error.name === 'SequelizeValidationError') {
-      return res.status(400).json({
-        error: 'Validation error',
-        details: error.errors.map(e => e.message)
-      });
-    }
-
-    console.error('Error creating payment:', error);
-    res.status(500).json({ error: 'Failed to create payment' });
-  }
-});
 
 // PUT /api/payments/:id - Update payment
 router.put('/:id', requireStaff, async (req, res) => {
   try {
-    const { id } = req.params;
+    const { note, ...extraFields } = req.body;
     // NOTE: Only the `note` field is allowed to be changed in the payments
-    const {
-      note
-    } = req.body;
+    if (Object.keys(extraFields).length > 0) {
+      return res.status(400).json({
+        error: 'Only the "note" field can be updated',
+        invalidFields: Object.keys(extraFields)
+      });
+    }
 
     const payment = await Payment.findByPk(id);
     if (!payment) {
