@@ -7,7 +7,6 @@ const {
   requireStaff,
 } = require('../middleware/auth');
 const AppointmentConflictError = require('../errors/AppointmentConflictError');
-const validateAppointmentRoles = require('../helpers');
 
 // All routes require authentication
 router.use(authenticateToken);
@@ -106,7 +105,7 @@ router.post('/', requireStaff, async (req, res) => {
   try {
     const {
         patient_id,
-        dentist_id,
+        dentist,
         treatment_id,
         problem_description,
         locked_price,
@@ -114,18 +113,25 @@ router.post('/', requireStaff, async (req, res) => {
         status
     } = req.body;
 
-    // Validate user roles
-    const roleValidation = await validateAppointmentRoles(patient_id, dentist_id);
-    if (!roleValidation.isValid) {
-      return res.status(roleValidation.statusCode).json({
-        error: roleValidation.error,
-        message: roleValidation.message
+    const patient = await User.findByPk(patient_id);
+    if (!patient) {
+      return res.status(404).json({
+        error: 'Patient not found',
+        message: `User with ID ${patient_id} does not exist`
+      });
+    }
+
+    // Validate that patient_id corresponds to a user with 'patient' role
+    if (patient.role !== 'patient') {
+      return res.status(400).json({
+        error: 'Invalid patient role',
+        message: `User with ID ${patient_id} is not a patient, but rather, a ${patient.role})`
       });
     }
 
     const appointment = await Appointment.create({
         patient_id: patient_id,
-        dentist_id: dentist_id,
+        dentist: dentist,
         treatment_id: treatment_id,
         problem_description: problem_description,
         locked_price: locked_price,
@@ -164,7 +170,7 @@ router.put('/:id', requireStaff, async (req, res) => {
     const { id } = req.params;
     const {
         patient_id,
-        dentist_id,
+        dentist,
         treatment_id,
         problem_description,
         locked_price,
@@ -172,18 +178,21 @@ router.put('/:id', requireStaff, async (req, res) => {
         status
     } = req.body;
 
-    // Validate user roles
-    const roleValidation = {};
-    if (patient_id || dentist_id) {
-      roleValidation = await validateAppointmentRoles(patient_id, dentist_id);
-      if (!roleValidation.isValid) {
-        return res.status(roleValidation.statusCode).json({
-          error: roleValidation.error,
-          message: roleValidation.message
-        });
-      }
+    const patient = await User.findByPk(patient_id);
+    if (!patient) {
+      return res.status(404).json({
+        error: 'Patient not found',
+        message: `User with ID ${patient_id} does not exist`
+      });
     }
 
+    // Validate that patient_id corresponds to a user with 'patient' role
+    if (patient.role !== 'patient') {
+      return res.status(400).json({
+        error: 'Invalid patient role',
+        message: `User with ID ${patient_id} is not a patient, but rather, a ${patient.role})`
+      });
+    }
 
     const appointment = await Appointment.findByPk(id);
     if (!appointment) {
@@ -192,7 +201,7 @@ router.put('/:id', requireStaff, async (req, res) => {
 
     await appointment.update({
         patient_id,
-        dentist_id,
+        dentist,
         treatment_id,
         problem_description,
         locked_price,

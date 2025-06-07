@@ -111,7 +111,7 @@ module.exports = {
     await queryInterface.bulkInsert('appointments', [
       {
         patient_id: 5,
-        dentist_id: 3,
+        dentist: "Dr. Tenma",
         treatment_id: 1,
         problem_description: 'Plaque buildup',
         locked_price: 500000,
@@ -122,7 +122,7 @@ module.exports = {
       },
       {
         patient_id: 5,
-        dentist_id: 3,
+        dentist: "Dr. Tenma",
         treatment_id: 2,
         problem_description: 'Tooth decay and pain',
         locked_price: 750000,
@@ -133,7 +133,7 @@ module.exports = {
       },
       {
         patient_id: 6,
-        dentist_id: 4,
+        dentist: "Dr. Lecter",
         treatment_id: 3,
         problem_description: 'Severe pulp infection',
         locked_price: 1200000,
@@ -144,7 +144,7 @@ module.exports = {
       },
       {
         patient_id: 6,
-        dentist_id: 3,
+        dentist: "Dr. Tenma",
         treatment_id: 3,
         problem_description: 'Severe pulp infection',
         locked_price: 1200000,
@@ -155,7 +155,7 @@ module.exports = {
       },
       {
         patient_id: 7,
-        dentist_id: 4,
+        dentist: "Dr. Lecter",
         treatment_id: 1,
         problem_description: 'Pulp infection',
         locked_price: 500000,

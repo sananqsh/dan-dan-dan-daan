@@ -19,13 +19,9 @@ const Appointment = sequelize.define('Appointment', {
       key: 'id'
     }
   },
-  dentist_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: User,
-      key: 'id'
-    }
+  dentist: {
+    type: DataTypes.TEXT,
+    allowNull: false
   },
   treatment_id: {
     type: DataTypes.INTEGER,
@@ -37,7 +33,7 @@ const Appointment = sequelize.define('Appointment', {
   },
   problem_description: {
     type: DataTypes.TEXT,
-    allowNull: false
+    allowNull: true
   },
   locked_price: {
     type: DataTypes.DECIMAL(10, 2),

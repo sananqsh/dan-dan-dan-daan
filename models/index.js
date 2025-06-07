@@ -16,9 +16,7 @@ async function syncDatabase() {
 
 // Associations
 User.hasMany(Appointment, { foreignKey: 'patient_id', as: 'PatientAppointments' });
-User.hasMany(Appointment, { foreignKey: 'dentist_id', as: 'DentistAppointments' });
 Appointment.belongsTo(User, { foreignKey: 'patient_id', as: 'Patient' });
-Appointment.belongsTo(User, { foreignKey: 'dentist_id', as: 'Dentist' });
 
 Treatment.hasMany(Appointment, { foreignKey: 'treatment_id' });
 Appointment.belongsTo(Treatment, { foreignKey: 'treatment_id' });
