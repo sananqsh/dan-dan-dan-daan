@@ -13,33 +13,33 @@ router.use(authenticateToken);
 
 // GET /api/treatments - Get all treatments
 router.get('/', requireStaff, async (req, res) => {
-    try {
-      const treatments = await Treatment.findAll({order: [['created_at', 'DESC']]});
+  try {
+    const treatments = await Treatment.findAll({order: [['created_at', 'DESC']]});
 
-      res.json(treatments);
-    } catch (error) {
-      console.error('Error fetching treatments:', error);
-      res.status(500).json({ error: 'Failed to fetch treatments' });
-    }
-  });
+    res.json(treatments);
+  } catch (error) {
+    console.error('Error fetching treatments:', error);
+    res.status(500).json({ error: 'Failed to fetch treatments' });
+  }
+});
 
 
 // GET /api/treatments/:id - Get treatment by ID
 router.get('/:id', requireStaff, async (req, res) => {
-    try {
-      const { id } = req.params;
-      const treatment = await Treatment.findByPk(id);
+  try {
+    const { id } = req.params;
+    const treatment = await Treatment.findByPk(id);
 
-      if (!treatment) {
-        return res.status(404).json({ error: 'Treatment not found' });
-      }
-
-      res.json(treatment);
-    } catch (error) {
-      console.error('Error fetching treatment:', error);
-      res.status(500).json({ error: 'Failed to fetch treatment' });
+    if (!treatment) {
+      return res.status(404).json({ error: 'Treatment not found' });
     }
-  });
+
+    res.json(treatment);
+  } catch (error) {
+    console.error('Error fetching treatment:', error);
+    res.status(500).json({ error: 'Failed to fetch treatment' });
+  }
+});
 
 // POST /api/treatments - Create new treatment
 router.post('/', requireManager, async (req, res) => {

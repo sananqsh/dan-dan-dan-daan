@@ -86,20 +86,20 @@ router.get('/today', requireStaff, async (req, res) => {
 
 // GET /api/appointments/:id - Get appointment by ID
 router.get('/:id', requireStaff, async (req, res) => {
-    try {
-      const { id } = req.params;
-      const appointment = await Appointment.findByPk(id);
+  try {
+    const { id } = req.params;
+    const appointment = await Appointment.findByPk(id);
 
-      if (!appointment) {
-        return res.status(404).json({ error: 'Appointment not found' });
-      }
-
-      res.json(appointment);
-    } catch (error) {
-      console.error('Error fetching appointment:', error);
-      res.status(500).json({ error: 'Failed to fetch appointment' });
+    if (!appointment) {
+      return res.status(404).json({ error: 'Appointment not found' });
     }
-  });
+
+    res.json(appointment);
+  } catch (error) {
+    console.error('Error fetching appointment:', error);
+    res.status(500).json({ error: 'Failed to fetch appointment' });
+  }
+});
 
 // POST /api/appointments - Create new appointment
 router.post('/', requireStaff, async (req, res) => {

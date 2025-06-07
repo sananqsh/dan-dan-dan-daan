@@ -11,33 +11,33 @@ router.use(authenticateToken);
 
 // GET /api/payments - Get all payments
 router.get('/', requireStaff, async (req, res) => {
-    try {
-      const payments = await Payment.findAll({order: [['created_at', 'DESC']]});
+  try {
+    const payments = await Payment.findAll({order: [['created_at', 'DESC']]});
 
-      res.json(payments);
-    } catch (error) {
-      console.error('Error fetching payments:', error);
-      res.status(500).json({ error: 'Failed to fetch payments' });
-    }
-  });
+    res.json(payments);
+  } catch (error) {
+    console.error('Error fetching payments:', error);
+    res.status(500).json({ error: 'Failed to fetch payments' });
+  }
+});
 
 
 // GET /api/payments/:id - Get payment by ID
 router.get('/:id', requireStaff, async (req, res) => {
-    try {
-      const { id } = req.params;
-      const payment = await Payment.findByPk(id);
+  try {
+    const { id } = req.params;
+    const payment = await Payment.findByPk(id);
 
-      if (!payment) {
-        return res.status(404).json({ error: 'Payment not found' });
-      }
-
-      res.json(payment);
-    } catch (error) {
-      console.error('Error fetching payment:', error);
-      res.status(500).json({ error: 'Failed to fetch payment' });
+    if (!payment) {
+      return res.status(404).json({ error: 'Payment not found' });
     }
-  });
+
+    res.json(payment);
+  } catch (error) {
+    console.error('Error fetching payment:', error);
+    res.status(500).json({ error: 'Failed to fetch payment' });
+  }
+});
 
 
 // PUT /api/payments/:id - Update payment
