@@ -1,6 +1,6 @@
 const express = require('express');
 const { Op } = require('sequelize');
-const { Appointment } = require('../models');
+const { Appointment, User } = require('../models');
 const router = express.Router();
 const {
   authenticateToken,
@@ -125,7 +125,7 @@ router.post('/', requireStaff, async (req, res) => {
     if (patient.role !== 'patient') {
       return res.status(400).json({
         error: 'Invalid patient role',
-        message: `User with ID ${patient_id} is not a patient, but rather, a ${patient.role})`
+        message: `User with ID ${patient_id} is not a patient, but rather, a ${patient.role}`
       });
     }
 
@@ -178,20 +178,22 @@ router.put('/:id', requireStaff, async (req, res) => {
         status
     } = req.body;
 
-    const patient = await User.findByPk(patient_id);
-    if (!patient) {
-      return res.status(404).json({
-        error: 'Patient not found',
-        message: `User with ID ${patient_id} does not exist`
-      });
-    }
+    if (patient_id) {
+      const patient = await User.findByPk(patient_id);
+      if (!patient) {
+        return res.status(404).json({
+          error: 'Patient not found',
+          message: `User with ID ${patient_id} does not exist`
+        });
+      }
 
-    // Validate that patient_id corresponds to a user with 'patient' role
-    if (patient.role !== 'patient') {
-      return res.status(400).json({
-        error: 'Invalid patient role',
-        message: `User with ID ${patient_id} is not a patient, but rather, a ${patient.role})`
-      });
+      // Validate that patient_id corresponds to a user with 'patient' role
+      if (patient.role !== 'patient') {
+        return res.status(400).json({
+          error: 'Invalid patient role',
+          message: `User with ID ${patient_id} is not a patient, but rather, a ${patient.role}`
+        });
+      }
     }
 
     const appointment = await Appointment.findByPk(id);
