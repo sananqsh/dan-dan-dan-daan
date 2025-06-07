@@ -106,7 +106,7 @@ const hasPermissionToEditRole = (actorRole, targetRole) => {
     }
 
     if (actorRole == "receptionist") {
-        if (targetRole == "manager") {
+        if (targetRole == "manager" || targetRole == "receptionist") {
             return false;
         }
 
