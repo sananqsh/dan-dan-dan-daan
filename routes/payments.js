@@ -53,6 +53,7 @@ router.get('/:id', requireStaff, async (req, res) => {
 // PUT /api/payments/:id - Update payment
 router.put('/:id', requireStaff, async (req, res) => {
   try {
+    const { id } = req.params;
     const { note, ...extraFields } = req.body;
     // NOTE: Only the `note` field is allowed to be changed in the payments
     if (Object.keys(extraFields).length > 0) {
