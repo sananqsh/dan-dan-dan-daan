@@ -69,4 +69,14 @@ Payment.getSummary = async function() {
   };
 };
 
+Payment.createFromAppointment = async function(appointment) {
+  const payment = await this.create({
+    appointment_id: appointment.id,
+    amount: appointment.locked_price,
+    paid_at: new Date()
+  });
+
+  return { success: true, payment: payment }
+}
+
 module.exports = Payment;

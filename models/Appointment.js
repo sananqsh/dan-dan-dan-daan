@@ -48,9 +48,9 @@ const Appointment = sequelize.define('Appointment', {
     allowNull: false
   },
   status: {
-    // After being done, we would demand payment from patient
-    type: DataTypes.ENUM('scheduled', 'done', 'canceled'),
-    defaultValue: 'scheduled',
+    // After being completed, we would demand payment from patient
+    type: DataTypes.ENUM('confirmed', 'completed', 'canceled', 'pending'),
+    defaultValue: 'confirmed',
     allowNull: false
   }
 }, {
@@ -66,16 +66,27 @@ const Appointment = sequelize.define('Appointment', {
       if (appointment.changed('scheduled_at') || appointment.changed('dentist_id') || appointment.changed('patient_id')) {
         await validateNoConflicts(appointment);
       }
+    },
+    afterUpdate: async (appointment, options) => {
+      if (appointment.changed('status') && appointment.status == 'completed') {
+        await makePaymentRecord(appointment);
+      }
     }
   }
 });
+
+
+async function makePaymentRecord(appointment) {
+  const Payment = require('./Payment');
+  await Payment.createFromAppointment(appointment);
+}
 
 async function validateNoConflicts(appointment) {
     // Find conflicting appointment with same scheduled_at and same dentist or patient
     const conflict = await Appointment.findOne({
         where: {
         scheduled_at: appointment.scheduled_at,
-        status: 'scheduled',
+        status: 'confirmed',
         id: { [Op.ne]: appointment.id || null },
         [Op.or]: [
             { dentist_id: appointment.dentist_id },

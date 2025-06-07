@@ -116,7 +116,7 @@ module.exports = {
         problem_description: 'Plaque buildup',
         locked_price: 500000,
         scheduled_at: new Date('2025-06-01T10:00:00'),
-        status: 'done',
+        status: 'completed',
         created_at: now,
         updated_at: now
       },
@@ -127,7 +127,7 @@ module.exports = {
         problem_description: 'Tooth decay and pain',
         locked_price: 750000,
         scheduled_at: new Date('2025-06-06T11:00:00'),
-        status: 'scheduled',
+        status: 'confirmed',
         created_at: now,
         updated_at: now
       },
@@ -138,7 +138,7 @@ module.exports = {
         problem_description: 'Severe pulp infection',
         locked_price: 1200000,
         scheduled_at: new Date('2025-06-01T10:00:00'),
-        status: 'scheduled',
+        status: 'confirmed',
         created_at: now,
         updated_at: now
       },
@@ -160,7 +160,7 @@ module.exports = {
         problem_description: 'Pulp infection',
         locked_price: 500000,
         scheduled_at: new Date('2025-06-02T11:00:00'),
-        status: 'done',
+        status: 'completed',
         created_at: now,
         updated_at: now
       },
