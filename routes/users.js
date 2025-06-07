@@ -196,9 +196,13 @@ router.put('/:id', requireStaff, async (req, res) => {
       name,
       phone_number,
       role,
+      password,
       insurance_number,
       insurance_provider
     } = req.body;
+    if (password) {
+      return res.status(400).json({error: 'Password should be changed only be the change_password API.'});
+    }
 
     const request_user_role = req.user.role;
 
