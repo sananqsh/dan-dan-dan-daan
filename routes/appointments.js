@@ -173,12 +173,15 @@ router.put('/:id', requireStaff, async (req, res) => {
     } = req.body;
 
     // Validate user roles
-    const roleValidation = await validateAppointmentRoles(patient_id, dentist_id);
-    if (!roleValidation.isValid) {
-      return res.status(roleValidation.statusCode).json({
-        error: roleValidation.error,
-        message: roleValidation.message
-      });
+    const roleValidation = {};
+    if (patient_id || dentist_id) {
+      roleValidation = await validateAppointmentRoles(patient_id, dentist_id);
+      if (!roleValidation.isValid) {
+        return res.status(roleValidation.statusCode).json({
+          error: roleValidation.error,
+          message: roleValidation.message
+        });
+      }
     }
 
 
