@@ -23,6 +23,18 @@ router.get('/', requireStaff, async (req, res) => {
   }
 });
 
+// GET /api/treatments/prices - Get all treatments
+router.get('/prices', requireStaff, async (req, res) => {
+  try {
+    const treatments = await Treatment.findAll({attributes: ['name', 'price'] , order: [['created_at', 'DESC']]});
+
+    res.json(treatments);
+  } catch (error) {
+    console.error('Error fetching treatments:', error);
+    res.status(500).json({ error: 'Failed to fetch treatments' });
+  }
+});
+
 
 // GET /api/treatments/:id - Get treatment by ID
 router.get('/:id', requireStaff, async (req, res) => {
