@@ -63,7 +63,7 @@ const Appointment = sequelize.define('Appointment', {
       await validateNoConflicts(appointment);
     },
     beforeUpdate: async (appointment, options) => {
-      if (appointment.changed('scheduled_at') || appointment.changed('dentist_id') || appointment.changed('patient_id')) {
+      if (appointment.changed('scheduled_at') || appointment.changed('patient_id')) {
         await validateNoConflicts(appointment);
       }
     },
@@ -82,36 +82,24 @@ async function makePaymentRecord(appointment) {
 }
 
 async function validateNoConflicts(appointment) {
-  // Find conflicting appointment with same scheduled_at and same dentist or patient
+  // Find conflicting appointment with same scheduled_at for the same patient
   const conflict = await Appointment.findOne({
       where: {
       scheduled_at: appointment.scheduled_at,
       status: 'confirmed',
       id: { [Op.ne]: appointment.id || null },
       [Op.or]: [
-          { dentist_id: appointment.dentist_id },
           { patient_id: appointment.patient_id }
       ]
       }
   });
 
-  if (conflict) {
-      const isDentistConflict = conflict.dentist_id === appointment.dentist_id;
-      const isPatientConflict = conflict.patient_id === appointment.patient_id;
 
-      let message = `Conflict detected with appointment ID ${conflict.id}.`;
-      if (isDentistConflict && isPatientConflict) {
-        message += ` Both patient and dentist have appointments at that time.`;
-      } else if (isDentistConflict) {
-        message += ` Dentist is already scheduled at that time.`;
-      } else if (isPatientConflict) {
-        message += ` Patient is already scheduled at that time.`;
-      }
+  if (conflict) {
+      let message = `Conflict detected with appointment ID ${conflict.id}. Patient is already scheduled at that time.`;
 
       throw new AppointmentConflictError(message, {
-        conflictId: conflict.id,
-        isDentistConflict,
-        isPatientConflict,
+        conflictedAppointmentId: conflict.id,
         scheduledAt: conflict.scheduled_at
     });
   }
