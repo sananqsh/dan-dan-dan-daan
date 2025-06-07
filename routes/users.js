@@ -176,21 +176,21 @@ router.post('/', requireStaff, async (req, res) => {
     }
 
     if (error.name === 'SequelizeUniqueConstraintError') {
-      return res.status(409).json({ error: 'Phone number already exists' });
+      first_error = error.errors[0];
+      if (first_error) {
+        unique_field_name = first_error.path
+        return res.status(409).json({ error: unique_field_name + ' already exists', msg: error });
+      }
     }
 
-    console.error('Error creating user:', error);
-    res.status(500).json({ error: 'Failed to create user' });
+    console.error('Error updating user:', error);
+    res.status(500).json({ error: 'Failed to update user' });
   }
 });
 
 // PUT /api/users/:id - Update user
 router.put('/:id', requireStaff, async (req, res) => {
   try {
-    if ('password' in req.user.body) {
-      return res.status(400).json({error: 'Password should be changed only be the change_password API.'});
-    }
-
     const { id } = req.params;
     const {
       name,
@@ -199,6 +199,7 @@ router.put('/:id', requireStaff, async (req, res) => {
       insurance_number,
       insurance_provider
     } = req.body;
+
     const request_user_role = req.user.role;
 
     const user = await User.findByPk(id);
@@ -235,7 +236,11 @@ router.put('/:id', requireStaff, async (req, res) => {
     }
 
     if (error.name === 'SequelizeUniqueConstraintError') {
-      return res.status(409).json({ error: 'Phone number already exists' });
+      first_error = error.errors[0];
+      if (first_error) {
+        unique_field_name = first_error.path
+        return res.status(409).json({ error: unique_field_name + ' already exists', msg: error });
+      }
     }
 
     console.error('Error updating user:', error);
