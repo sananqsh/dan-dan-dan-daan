@@ -21,6 +21,16 @@ router.get('/', requireStaff, async (req, res) => {
   }
 });
 
+// GET /api/payments/summary - Get Payments summery
+router.get('/summary', requireStaff, async (req, res) => {
+  try {
+    const summary = await Payment.getSummary();
+    res.json(summary);
+  } catch (error) {
+    console.error('Error fetching payments:', error);
+    res.status(500).json({ error: 'Failed to fetch payments' });
+  }
+});
 
 // GET /api/payments/:id - Get payment by ID
 router.get('/:id', requireStaff, async (req, res) => {

@@ -51,4 +51,22 @@ const Payment = sequelize.define('Payment', {
   }
 });
 
+
+Payment.getSummary = async function() {
+  const paymentSummary = await this.findAll({
+    attributes: [
+      [sequelize.fn('COUNT', sequelize.col('id')), 'numberOfPayments'],
+      [sequelize.fn('SUM', sequelize.col('amount')), 'totalPayment']
+    ],
+    raw: true
+  });
+
+  const result = paymentSummary[0];
+
+  return {
+    numberOfPayments: parseInt(result.numberOfPayments) || 0,
+    totalPayment: parseFloat(result.totalPayment) || 0.00
+  };
+};
+
 module.exports = Payment;
