@@ -112,16 +112,16 @@ router.get('/me', authenticateToken, async (req, res) => {
 // POST /api/auth/change-password - Change password
 router.post('/change-password', authenticateToken, async (req, res) => {
   try {
-    const { currentPassword, newPassword } = req.body;
+    const { current_password, new_password } = req.body;
 
-    if (!currentPassword || !newPassword) {
+    if (!current_password || !new_password) {
       return res.status(400).json({
         error: 'Current password and new password are required'
       });
     }
 
     // Verify current password
-    const isValidPassword = await req.user.checkPassword(currentPassword);
+    const isValidPassword = await req.user.checkPassword(current_password);
     if (!isValidPassword) {
       return res.status(400).json({
         error: 'Current password is incorrect'
@@ -129,14 +129,14 @@ router.post('/change-password', authenticateToken, async (req, res) => {
     }
 
     // Validate new password
-    if (newPassword.length < 6) {
+    if (new_password.length < 6) {
       return res.status(400).json({
         error: 'New password must be at least 6 characters long'
       });
     }
 
     // Update password (will be hashed automatically)
-    await req.user.update({ password: newPassword });
+    await req.user.update({ password: new_password });
 
     res.json({ message: 'Password changed successfully' });
 
