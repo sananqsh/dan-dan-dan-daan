@@ -52,34 +52,44 @@ const User = sequelize.define('User', {
     defaultValue: true,
     allowNull: false
   },
-  // Patient-specific fields
-  //    NOTE: if role-specific fields increased in the future, we should define role-specific tables with foreign key to the users
-  insurance_number: {
+  birth_date: {
+    type: DataTypes.DATEONLY,
+    allowNull: false,
+    validate: {
+      notEmpty: { msg: 'Birth date cannot be empty' },
+      isDate: { msg: 'Must be a valid date' },
+      isBefore: {
+        args: new Date().toISOString().split('T')[0],
+        msg: 'Birth date cannot be in the future'
+      }
+    }
+  },
+  national_number: {
     type: DataTypes.STRING(50),
     allowNull: true,
     unique: true,
     validate: {
-      isInsuranceNumberValid(value) {
-        if (this.role === 'patient' && !value) {
-          throw new Error('Insurance number is required for patients');
-        }
-        if (this.role !== 'patient' && value) {
-          throw new Error('Insurance number should only be set for patients');
-        }
+      notEmpty: { msg: 'National number cannot be empty' },
+      is: {
+        args: /^\d{10}$/,
+        msg: 'National number must be exactly 10 digits'
       }
     }
   },
-  insurance_provider: {
-    type: DataTypes.STRING(100),
+  // Patient-specific fields
+  //   NOTE: if role-specific fields increased in the future,
+  //          we should define role-specific tables with foreign key to the users
+  doctor_notes: {
+    type: DataTypes.STRING(50),
     allowNull: true,
     validate: {
-      isInsuranceProviderValid(value) {
+      isDoctorNotesValid(value) {
         if (this.role !== 'patient' && value) {
-          throw new Error('Insurance provider should only be set for patients');
+          throw new Error('Doctor notes should only be set for patients');
         }
       }
     }
-  },
+  }
 }, {
   tableName: 'users',
   timestamps: true,

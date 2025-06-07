@@ -4,6 +4,8 @@ const { User, Treatment, Appointment, Payment } = require('../models');
 
 module.exports = {
   async up(queryInterface, Sequelize) {
+    const now = new Date();
+
     // Insert users
     const users = await queryInterface.bulkInsert('users', [
       {
@@ -11,62 +13,72 @@ module.exports = {
         phone_number: '09120001230',
         password: await User.hashPassword('123123'),
         role: "receptionist",
-        created_at: new Date(),
-        updated_at: new Date()
+        birth_date: new Date('1993-03-10'),
+        national_number: "1234567830",
+        created_at: now,
+        updated_at: now
       },
       {
         name: 'Jane Smith',
         phone_number: '09120001231',
         password: await User.hashPassword('123456'),
         role: "receptionist",
-        created_at: new Date(),
-        updated_at: new Date()
+        birth_date: new Date('1994-03-11'),
+        national_number: "1234567831",
+        created_at: now,
+        updated_at: now
       },
       {
         name: 'Kenzo Tenma',
         phone_number: '09120001240',
         password: await User.hashPassword('123456'),
         role: "dentist",
-        created_at: new Date(),
-        updated_at: new Date()
+        birth_date: new Date('1988-04-10'),
+        national_number: "1234567840",
+        created_at: now,
+        updated_at: now
       },
       {
         name: 'Hannibal Lecter',
         phone_number: '09120001241',
         password: await User.hashPassword('123456'),
         role: "dentist",
-        created_at: new Date(),
-        updated_at: new Date()
+        birth_date: new Date('1977-04-11'),
+        national_number: "1234567841",
+        created_at: now,
+        updated_at: now
       },
       {
         name: 'Bob Dickson',
         phone_number: '09120001250',
         password: await User.hashPassword('123Bob'),
         role: "patient",
-        insurance_number: 'INS123456780',
-        insurance_provider: 'Red Crescent',
-        created_at: new Date(),
-        updated_at: new Date()
+        birth_date: new Date('1995-04-10'),
+        national_number: "1234567850",
+        doctor_notes: "should come to the clinic after 3 months",
+        created_at: now,
+        updated_at: now
       },
       {
         name: 'Rick Johnson',
         phone_number: '09120001251',
         password: await User.hashPassword('123Bob'),
         role: "patient",
-        insurance_number: 'INS123456781',
-        insurance_provider: 'Red Crescent',
-        created_at: new Date(),
-        updated_at: new Date()
+        birth_date: new Date('2005-04-11'),
+        national_number: "1234567851",
+        doctor_notes: "should have another treatment each week",
+        created_at: now,
+        updated_at: now
       },
       {
         name: 'Pat Ientson',
         phone_number: '09120001252',
         password: await User.hashPassword('123Bob'),
         role: "patient",
-        insurance_number: 'INS123456782',
-        insurance_provider: 'Red Crescent',
-        created_at: new Date(),
-        updated_at: new Date()
+        birth_date: new Date('2015-04-12'),
+        national_number: "1234567852",
+        created_at: now,
+        updated_at: now
       },
     ], { returning: true });
 
@@ -76,22 +88,22 @@ module.exports = {
         name: 'Teeth Cleaning',
         description: 'Basic dental cleaning procedure',
         price: 500000,
-        created_at: new Date(),
-        updated_at: new Date()
+        created_at: now,
+        updated_at: now
       },
       {
         name: 'Tooth Extraction',
         description: 'Removal of a decayed or damaged tooth',
         price: 750000,
-        created_at: new Date(),
-        updated_at: new Date()
+        created_at: now,
+        updated_at: now
       },
       {
         name: 'Root Canal',
         description: 'Endodontic treatment for infected tooth pulp',
         price: 1200000,
-        created_at: new Date(),
-        updated_at: new Date()
+        created_at: now,
+        updated_at: now
       }
     ]);
 
@@ -105,8 +117,8 @@ module.exports = {
         locked_price: 500000,
         scheduled_at: new Date('2025-06-01T10:00:00'),
         status: 'done',
-        created_at: new Date(),
-        updated_at: new Date()
+        created_at: now,
+        updated_at: now
       },
       {
         patient_id: 5,
@@ -116,8 +128,8 @@ module.exports = {
         locked_price: 750000,
         scheduled_at: new Date('2025-06-06T11:00:00'),
         status: 'scheduled',
-        created_at: new Date(),
-        updated_at: new Date()
+        created_at: now,
+        updated_at: now
       },
       {
         patient_id: 6,
@@ -127,8 +139,8 @@ module.exports = {
         locked_price: 1200000,
         scheduled_at: new Date('2025-06-01T10:00:00'),
         status: 'scheduled',
-        created_at: new Date(),
-        updated_at: new Date()
+        created_at: now,
+        updated_at: now
       },
       {
         patient_id: 6,
@@ -138,8 +150,8 @@ module.exports = {
         locked_price: 1200000,
         scheduled_at: new Date('2025-06-05T12:00:00'),
         status: 'canceled',
-        created_at: new Date(),
-        updated_at: new Date()
+        created_at: now,
+        updated_at: now
       },
       {
         patient_id: 7,
@@ -149,8 +161,8 @@ module.exports = {
         locked_price: 500000,
         scheduled_at: new Date('2025-06-02T11:00:00'),
         status: 'done',
-        created_at: new Date(),
-        updated_at: new Date()
+        created_at: now,
+        updated_at: now
       },
     ]);
 
@@ -161,14 +173,14 @@ module.exports = {
         amount: 500000,
         note: 'Paid by card',
         paid_at: new Date('2025-06-01T10:30:00'),
-        created_at: new Date()
+        created_at: now
       },
       {
         appointment_id: 5,
         amount: 750000,
         note: 'Paid by insurance',
         paid_at: new Date('2025-06-02T12:00:00'),
-        created_at: new Date()
+        created_at: now
       },
     ]);
   },

@@ -145,10 +145,12 @@ router.post('/', requireStaff, async (req, res) => {
     const {
       name,
       phone_number,
-      role,
       password,
-      insurance_number,
-      insurance_provider
+      role,
+      is_active,
+      birth_date,
+      national_number,
+      doctor_notes
     } = req.body;
     const request_user_role = req.user.role;
 
@@ -156,13 +158,17 @@ router.post('/', requireStaff, async (req, res) => {
       return res.status(403).json({ error: 'You are not allowed to do this action'})
     }
 
-    // Build user data object
-    const userData = { name, phone_number, role, password, insurance_number, insurance_provider };
+    // TODO: if role is doctor or patient, set their national number as their password
+    if ((role == "dentist" || role == "patient") && !password) {
+      password = national_number
+    }
 
-    // Add insurance fields if user is a patient
+    // Build user data object
+    const userData = { name, phone_number, password, role, is_active, birth_date, national_number };
+
+    // Add doctor notes if user is a patient
     if (role === 'patient') {
-      if (insurance_number) userData.insurance_number = insurance_number;
-      if (insurance_provider) userData.insurance_provider = insurance_provider;
+      if (doctor_notes) userData.doctor_notes = doctor_notes;
     }
 
     const user = await User.create(userData);
@@ -195,10 +201,12 @@ router.put('/:id', requireStaff, async (req, res) => {
     const {
       name,
       phone_number,
-      role,
       password,
-      insurance_number,
-      insurance_provider
+      role,
+      is_active,
+      birth_date,
+      national_number,
+      doctor_notes
     } = req.body;
     if (password) {
       return res.status(400).json({error: 'Password should be changed only be the change_password API.'});
@@ -216,20 +224,14 @@ router.put('/:id', requireStaff, async (req, res) => {
     }
 
     // Build update data object
-    const updateData = { name, phone_number, role, insurance_number, insurance_provider };
+    const updateData = { name, phone_number, role, is_active, birth_date, national_number };
 
-    // Handle insurance fields based on role
+    // Handle doctor notes if user is a patient
     if (role === 'patient') {
-      // If becoming/staying a patient, include insurance fields
-      if (insurance_number !== undefined) updateData.insurance_number = insurance_number;
-      if (insurance_provider !== undefined) updateData.insurance_provider = insurance_provider;
-    } else if (user.role === 'patient' && role !== 'patient') {
-      // If changing from patient to another role, clear insurance fields
-      updateData.insurance_number = null;
-      updateData.insurance_provider = null;
+      if (doctor_notes !== undefined) updateData.doctor_notes = doctor_notes;
     }
 
-    await user.update({ name, phone_number, role });
+    await user.update(updateData);
     res.json(user);
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
