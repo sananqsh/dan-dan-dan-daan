@@ -146,6 +146,7 @@ router.post('/', requireStaff, async (req, res) => {
       name,
       phone_number,
       role,
+      password,
       insurance_number,
       insurance_provider
     } = req.body;
@@ -156,7 +157,7 @@ router.post('/', requireStaff, async (req, res) => {
     }
 
     // Build user data object
-    const userData = { name, phone_number, role };
+    const userData = { name, phone_number, role, password, insurance_number, insurance_provider };
 
     // Add insurance fields if user is a patient
     if (role === 'patient') {
@@ -186,6 +187,10 @@ router.post('/', requireStaff, async (req, res) => {
 // PUT /api/users/:id - Update user
 router.put('/:id', requireStaff, async (req, res) => {
   try {
+    if ('password' in req.user.body) {
+      return res.status(400).json({error: 'Password should be changed only be the change_password API.'});
+    }
+
     const { id } = req.params;
     const {
       name,
@@ -206,7 +211,7 @@ router.put('/:id', requireStaff, async (req, res) => {
     }
 
     // Build update data object
-    const updateData = { name, phone_number, role };
+    const updateData = { name, phone_number, role, insurance_number, insurance_provider };
 
     // Handle insurance fields based on role
     if (role === 'patient') {
