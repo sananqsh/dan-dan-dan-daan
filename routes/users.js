@@ -99,8 +99,8 @@ router.get('/:id/record', requireStaff, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    if (userBasic.role != 'dentist' && userBasice.role != 'patient') {
-      return res.status(400).json({ error: 'Requested user should be either a dentist or a patient'})
+    if (userBasic.role != 'patient') {
+      return res.status(400).json({ error: 'Requested user should be a patient'})
     }
 
     // Determine which appointments to include based on user role
