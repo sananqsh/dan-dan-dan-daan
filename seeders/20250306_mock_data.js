@@ -85,26 +85,35 @@ module.exports = {
     // Insert treatments
     await queryInterface.bulkInsert('treatments', [
       {
-        name: 'Teeth Cleaning',
-        description: 'Basic dental cleaning procedure',
-        price: 500000,
+        name: "Cleaning",
+        price: 125,
         created_at: now,
         updated_at: now
       },
       {
-        name: 'Tooth Extraction',
-        description: 'Removal of a decayed or damaged tooth',
-        price: 750000,
+        name: "Filling",
+        price: 250,
         created_at: now,
         updated_at: now
       },
       {
-        name: 'Root Canal',
-        description: 'Endodontic treatment for infected tooth pulp',
-        price: 1200000,
+        name: "Root",
+        price: 1200,
         created_at: now,
         updated_at: now
-      }
+      },
+      {
+        name: "Braces",
+        price: 5500,
+        created_at: now,
+        updated_at: now
+      },
+      {
+        name: "Implant",
+        price: 3000,
+        created_at: now,
+        updated_at: now
+      },
     ]);
 
     // Insert appointments
@@ -114,7 +123,7 @@ module.exports = {
         dentist: "Dr. Tenma",
         treatment_id: 1,
         problem_description: 'Plaque buildup',
-        locked_price: 500000,
+        locked_price: 125,
         scheduled_at: new Date('2025-06-01T10:00:00'),
         status: 'completed',
         created_at: now,
@@ -125,7 +134,7 @@ module.exports = {
         dentist: "Dr. Tenma",
         treatment_id: 2,
         problem_description: 'Tooth decay and pain',
-        locked_price: 750000,
+        locked_price: 250,
         scheduled_at: new Date('2025-06-06T11:00:00'),
         status: 'confirmed',
         created_at: now,
@@ -136,7 +145,7 @@ module.exports = {
         dentist: "Dr. Lecter",
         treatment_id: 3,
         problem_description: 'Severe pulp infection',
-        locked_price: 1200000,
+        locked_price: 1200,
         scheduled_at: new Date('2025-06-01T10:00:00'),
         status: 'confirmed',
         created_at: now,
@@ -147,7 +156,7 @@ module.exports = {
         dentist: "Dr. Tenma",
         treatment_id: 3,
         problem_description: 'Severe pulp infection',
-        locked_price: 1200000,
+        locked_price: 1200,
         scheduled_at: new Date('2025-06-05T12:00:00'),
         status: 'canceled',
         created_at: now,
@@ -158,7 +167,7 @@ module.exports = {
         dentist: "Dr. Lecter",
         treatment_id: 1,
         problem_description: 'Pulp infection',
-        locked_price: 500000,
+        locked_price: 125,
         scheduled_at: new Date('2025-06-02T11:00:00'),
         status: 'completed',
         created_at: now,
@@ -170,14 +179,14 @@ module.exports = {
     await queryInterface.bulkInsert('payments', [
       {
         appointment_id: 1,
-        amount: 500000,
+        amount: 125,
         note: 'Paid by card',
         paid_at: new Date('2025-06-01T10:30:00'),
         created_at: now
       },
       {
         appointment_id: 5,
-        amount: 750000,
+        amount: 125,
         note: 'Paid by insurance',
         paid_at: new Date('2025-06-02T12:00:00'),
         created_at: now
