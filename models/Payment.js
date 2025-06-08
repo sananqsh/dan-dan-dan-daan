@@ -55,7 +55,7 @@ const Payment = sequelize.define('Payment', {
 Payment.getSummary = async function() {
   const paymentSummary = await this.findAll({
     attributes: [
-      [sequelize.fn('COUNT', sequelize.col('id')), 'numberOfPayments'],
+      [sequelize.fn('COUNT', sequelize.col('id')), 'sessions'],
       [sequelize.fn('SUM', sequelize.col('amount')), 'totalPayment']
     ],
     raw: true
@@ -64,7 +64,7 @@ Payment.getSummary = async function() {
   const result = paymentSummary[0];
 
   return {
-    numberOfPayments: parseInt(result.numberOfPayments) || 0,
+    sessions: parseInt(result.sessions) || 0,
     totalPayment: parseFloat(result.totalPayment) || 0.00
   };
 };
