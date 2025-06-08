@@ -71,8 +71,8 @@ const User = sequelize.define('User', {
     validate: {
       notEmpty: { msg: 'National number cannot be empty' },
       is: {
-        args: /^\d{10}$/,
-        msg: 'National number must be exactly 10 digits'
+        args: /^\d{5,10}$/,
+        msg: 'National number must be 5 to 10 digits'
       }
     }
   },
