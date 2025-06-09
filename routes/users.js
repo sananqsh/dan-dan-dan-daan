@@ -264,10 +264,6 @@ router.delete('/:id', requireManager, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    if (!hasPermissionToEditRole(request_user_role, user.role)) {
-      return res.status(403).json({ error: 'You are not allowed to do this action'})
-    }
-
     await user.destroy();
     res.json({ message: 'User deleted successfully' });
   } catch (error) {
