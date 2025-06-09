@@ -10,7 +10,7 @@ module.exports = {
     const users = await queryInterface.bulkInsert('users', [
       {
         name: 'John Doe',
-        phone_number: '09120001220',
+        phone_number: '9120001220',
         password: await User.hashPassword('123123'),
         role: "manager",
         birth_date: new Date('1984-10-20'),

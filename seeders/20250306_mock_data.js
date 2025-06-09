@@ -10,7 +10,7 @@ module.exports = {
     const users = await queryInterface.bulkInsert('users', [
       {
         name: 'Pam Beesly',
-        phone_number: '09120001230',
+        phone_number: '9120001230',
         password: await User.hashPassword('123123'),
         role: "receptionist",
         birth_date: new Date('1993-03-10'),
@@ -20,7 +20,7 @@ module.exports = {
       },
       {
         name: 'Jane Smith',
-        phone_number: '09120001231',
+        phone_number: '9120001231',
         password: await User.hashPassword('123456'),
         role: "receptionist",
         birth_date: new Date('1994-03-11'),
@@ -30,7 +30,7 @@ module.exports = {
       },
       {
         name: 'Kenzo Tenma',
-        phone_number: '09120001240',
+        phone_number: '9120001240',
         password: await User.hashPassword('123456'),
         role: "dentist",
         birth_date: new Date('1988-04-10'),
@@ -40,7 +40,7 @@ module.exports = {
       },
       {
         name: 'Hannibal Lecter',
-        phone_number: '09120001241',
+        phone_number: '9120001241',
         password: await User.hashPassword('123456'),
         role: "dentist",
         birth_date: new Date('1977-04-11'),
@@ -50,7 +50,7 @@ module.exports = {
       },
       {
         name: 'Bob Dickson',
-        phone_number: '09120001250',
+        phone_number: '9120001250',
         password: await User.hashPassword('123Bob'),
         role: "patient",
         birth_date: new Date('1995-04-10'),
@@ -61,7 +61,7 @@ module.exports = {
       },
       {
         name: 'Rick Johnson',
-        phone_number: '09120001251',
+        phone_number: '9120001251',
         password: await User.hashPassword('123Bob'),
         role: "patient",
         birth_date: new Date('2005-04-11'),
@@ -72,7 +72,7 @@ module.exports = {
       },
       {
         name: 'Pat Ientson',
-        phone_number: '09120001252',
+        phone_number: '9120001252',
         password: await User.hashPassword('123Bob'),
         role: "patient",
         birth_date: new Date('2015-04-12'),
