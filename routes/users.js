@@ -16,6 +16,22 @@ router.use(authenticateToken);
 // GET /api/users - Get all users
 router.get('/', requireManager, async (req, res) => {
   try {
+    const { national_number } = req.query;
+    if (national_number) {
+      const request_user_role = req.user.role;
+
+      const user = await User.findByNationalNumber(national_number);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      if (!hasPermissionToEditRole(request_user_role, user.role)) {
+        return res.status(403).json({ error: 'You are not allowed to do this action'})
+      }
+
+      res.json(user);
+    }
+
     const users = await User.findAll({order: [['created_at', 'DESC']]});
 
     res.json(users);

@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Op } = require('sequelize');
 const bcrypt = require('bcrypt');
 const sequelize = require('../config/database');
 
@@ -129,6 +129,13 @@ User.hashPassword = async function (plainPassword) {
   return await bcrypt.hash(plainPassword, saltRounds);
 };
 
+User.findByNationalNumber = async function (national_number) {
+  return await this.findOne({
+    where: {
+      national_number: { [Op.eq]: national_number }
+    }
+  });
+}
 
 // Instance method to check password
 User.prototype.checkPassword = async function(password) {
