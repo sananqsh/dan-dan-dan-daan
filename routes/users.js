@@ -174,13 +174,12 @@ router.post('/', requireStaff, async (req, res) => {
       return res.status(403).json({ error: 'You are not allowed to do this action'})
     }
 
-    // TODO: if role is doctor or patient, set their national number as their password
-    if ((role == "dentist" || role == "patient") && !password) {
-      password = national_number
-    }
-
     // Build user data object
     const userData = { name, phone_number, password, role, is_active, birth_date, national_number };
+
+    if (!password && (!role || role == "dentist" || role == "patient")) {
+      userData.password = national_number
+    }
 
     // Add doctor notes if user is a patient
     if (role === 'patient') {
@@ -206,7 +205,7 @@ router.post('/', requireStaff, async (req, res) => {
     }
 
     console.error('Error updating user:', error);
-    res.status(500).json({ error: 'Failed to update user' });
+    res.status(500).json({ error: 'Failed to create user' });
   }
 });
 
