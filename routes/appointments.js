@@ -1,6 +1,6 @@
 const express = require('express');
 const { Op } = require('sequelize');
-const { Appointment, User } = require('../models');
+const { Appointment, User, Treatment } = require('../models');
 const router = express.Router();
 const {
   authenticateToken,
@@ -48,7 +48,19 @@ router.get('/', requireStaff, async (req, res) => {
 
     const appointments = await Appointment.findAll({
       where,
-      order: [['scheduled_at', 'DESC']]
+      order: [['scheduled_at', 'DESC']],
+      include: [
+        {
+          model: User,
+          as: 'Patient',
+          attributes: ['name']
+        },
+        {
+          model: Treatment,
+          as: 'Treatment',
+          attributes: ['name']
+        }
+      ]
     });
 
     res.json(appointments);
@@ -72,8 +84,20 @@ router.get('/today', requireStaff, async (req, res) => {
         };
 
         const appointments = await Appointment.findAll({
-            where,
-            order: [['scheduled_at', 'DESC']]
+          where,
+          order: [['scheduled_at', 'DESC']],
+          include: [
+            {
+              model: User,
+              as: 'Patient',
+              attributes: ['name']
+            },
+            {
+              model: Treatment,
+              as: 'Treatment',
+              attributes: ['name']
+            }
+          ]
         });
 
         res.json(appointments);
