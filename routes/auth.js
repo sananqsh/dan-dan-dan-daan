@@ -7,17 +7,17 @@ const router = express.Router();
 // POST /api/auth/login - Login user (only allow managers and receptionists to log in for now)
 router.post('/login', async (req, res) => {
     try {
-      const { phone_number, password } = req.body;
-
-      if (!phone_number || !password) {
+      const { username, password } = req.body;
+      const national_number = username;
+      if (!national_number || !password) {
         return res.status(400).json({
-          error: 'Phone number and password are required'
+          error: 'Username and password are required'
         });
       }
 
-      // Find user by phone number
+      // Find user by national number
       const user = await User.findOne({
-        where: { phone_number }
+        where: { national_number }
       });
 
       if (!user) {
@@ -54,6 +54,8 @@ router.post('/login', async (req, res) => {
         phone_number: user.phone_number,
         role: user.role,
         is_active: user.is_active,
+        birth_date: user.birth_date,
+        national_number: user.national_number,
         last_login: user.last_login
       };
 
